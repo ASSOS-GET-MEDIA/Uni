@@ -1,6 +1,10 @@
 <?php
-// Assurer que la session est bien démarrée
+include '../common/php/fetch_posts.php'; // On inclut le script qui récupère les posts en fonction des filtres
+
 session_start();
+
+$searchQuery = isset($_GET['q']) ? $_GET['q'] : ''; // Recherche générale
+$hashtag = isset($_GET['tag']) ? $_GET['tag'] : ''; // Recherche spécifique aux hashtags
 
 // Vérifier si l'utilisateur est connecté en vérifiant la présence de 'user_id' dans la session
 if (!isset($_SESSION['user_id'])) {
@@ -49,7 +53,7 @@ if ($followedUsers) {
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3 align-items-center">
-        <a class="navbar-brand d-flex flex-row" href="homepage.php">Universee<p class="ms-2 text-secondary">v2</p></a>
+        <a class="navbar-brand d-flex flex-row" href="#">Universee<p class="ms-2 text-secondary">v2</p></a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -67,7 +71,7 @@ if ($followedUsers) {
                     <img src="<?= htmlspecialchars($user['pp']) ?>" alt="PP" class="rounded-circle" width="40">
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                    <li><a class="dropdown-item" href="profile.php?u=<?= $currentUserId ?>">Profil</a></li>
+                    <li><a class="dropdown-item" href="#">Profil</a></li>
                     <li><a class="dropdown-item" href="#">Paramètres</a></li>
                     <li><a class="dropdown-item" href="../common/php/logout.php">Se déconnecter</a></li>
                 </ul>
@@ -79,54 +83,29 @@ if ($followedUsers) {
         <div class="row">
             <aside class="col-md-3 d-none d-md-block">
                 <div class="card">
-                    <div class="card-header">Tendances</div>
-                    <ul class="list-group list-group-flush" id="trending-hashtags">
-                        <li class="list-group-item">Chargement...</li>
+                    <div class="card-header">Catégories</div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Tendance</li>
+                        <li class="list-group-item">Technologie</li>
+                        <li class="list-group-item">Divertissement</li>
                     </ul>
                 </div>
             </aside>
 
-
             <main class="col-md-6">
                 <div class="card mb-3">
-                    <div class="card-body">
-                        <form id="post-form">
-                            <textarea class="form-control" name="content" id="content" rows="3" placeholder="Exprimez-vous..."></textarea>
-                            <!-- Section du sondage cachée au départ -->
-                            <div id="poll-section" class="mt-2" style="display: none;">
-                                <label for="poll-question">Question du sondage</label>
-                                <input type="text" class="form-control" id="poll-question" name="poll_question" placeholder="Entrez votre question de sondage" required>
-                                
-                                <!-- 2 champs de réponses par défaut -->
-                                <label for="poll-options">Réponses du sondage</label>
-                                <div id="poll-options">
-                                    <div class="input-group mb-2">
-                                        <input type="text" class="form-control" name="poll_options[]" placeholder="Option 1" required>
-                                        <button type="button" class="btn btn-outline-danger" onclick="removeOption(this)">❌</button>
-                                    </div>
-                                    <div class="input-group mb-2">
-                                        <input type="text" class="form-control" name="poll_options[]" placeholder="Option 2" required>
-                                        <button type="button" class="btn btn-outline-danger" onclick="removeOption(this)">❌</button>
-                                    </div>
-                                </div>
-
-                                <!-- Bouton pour ajouter des options -->
-                                <button type="button" id="add-option-btn" class="btn btn-outline-secondary mt-2">Ajouter une réponse</button>
-                            </div>
-
-                            <div>
-                                <button type="button" class="btn btn-outline-secondary mt-2" id="poll-toggle-btn">
-                                    Ajouter un sondage
-                                </button>
-                                <button class="btn btn-primary mt-2" type="submit">Publier</button>
-                            </div>
-                        </form>
-                    </div>
+                    <form id="post-form">
+                        <textarea class="form-control" name="content" id="content" rows="3" placeholder="Exprimez-vous..."></textarea>
+                        <button class="btn btn-primary mt-2" type="submit">Publier</button>
+                    </form>
                 </div>
 
                 <!-- Liste des posts (sera mise à jour dynamiquement) -->
                 <div id="posts-list">
-                    <?php include '../common/php/post.php'; ?>
+                    <?php
+                        // Affichage des posts trouvés
+                        fetchPost($conn, $searchQuery, $hashtag);
+                    ?>
                 </div>
             </main>
 
@@ -153,85 +132,12 @@ if ($followedUsers) {
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../common/js/vote.js"></script>
-
-    <script>
-        // Afficher/masquer la section du sondage
-        document.getElementById('poll-toggle-btn').addEventListener('click', function() {
-            var pollSection = document.getElementById('poll-section');
-            pollSection.style.display = (pollSection.style.display === 'none') ? 'block' : 'none';
-        });
-
-        // Ajouter un champ de réponse supplémentaire (jusqu'à 5)
-        document.getElementById('add-option-btn').addEventListener('click', function() {
-            var pollOptions = document.getElementById('poll-options');
-            var existingOptions = pollOptions.getElementsByTagName('input').length;
-
-            // Ajouter une nouvelle option si il y en a moins de 5
-            if (existingOptions < 4) {  // 10 champ maximum (2 initialement + 8 ajoutés)
-                var newOption = document.createElement('div');
-                newOption.classList.add('input-group', 'mb-2');
-                newOption.innerHTML = `
-                    <input type="text" class="form-control" name="poll_options[]" placeholder="Option ${existingOptions + 1}">
-                    <button type="button" class="btn btn-outline-danger" onclick="removeOption(this)">❌</button>
-                `;
-                pollOptions.appendChild(newOption);
-            } else {
-                alert("Vous ne pouvez ajouter que 5 réponses.");
-            }
-        });
-
-        // Supprimer une option, mais garder au moins deux champs
-        function removeOption(button) {
-            var pollOptions = document.getElementById('poll-options');
-            var optionsCount = pollOptions.getElementsByTagName('input').length;
-
-            // S'assurer qu'il reste au moins deux options
-            if (optionsCount > 2) {
-                var inputGroup = button.parentNode;
-                inputGroup.remove();
-            } else {
-                alert("Vous devez garder au moins deux réponses.");
-            }
-        }
-    </script>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            fetch('../common/php/fetch_trending_hashtags.php')
-                .then(response => response.json())
-                .then(data => {
-                    let hashtagList = document.getElementById('trending-hashtags');
-                    hashtagList.innerHTML = ''; // Vide la liste avant d'ajouter les hashtags
-
-                    if (data.length > 0) {
-                        data.forEach(hashtag => {
-                            let listItem = document.createElement('li');
-                            listItem.className = 'list-group-item';
-                            listItem.innerHTML = `<a href="search.php?tag=${encodeURIComponent(hashtag.hashtag)}"><p class='hashtag'>#${hashtag.hashtags} (${hashtag.count})</p></a>`;
-                            hashtagList.appendChild(listItem);
-                        });
-                    } else {
-                        hashtagList.innerHTML = '<li class="list-group-item">Aucune tendance pour l\'instant</li>';
-                    }
-                })
-                .catch(error => console.error('Erreur de chargement des hashtags:', error));
-        });
-    </script>
 
     <script>
         document.getElementById('post-form').addEventListener('submit', function(e) {
             e.preventDefault(); // Empêche le rechargement de la page
             
             const content = document.getElementById('content').value;
-            const pollQuestion = document.getElementById('poll-question') ? document.getElementById('poll-question').value : '';
-            const pollOptions = [];
-            if (document.getElementById('poll-options')) {
-                const optionInputs = document.querySelectorAll('#poll-options input');
-                optionInputs.forEach(input => {
-                    pollOptions.push(input.value);
-                });
-            }
 
             if (!content.trim()) {
                 alert('Le contenu ne peut pas être vide.');
@@ -240,8 +146,6 @@ if ($followedUsers) {
 
             const formData = new FormData();
             formData.append('content', content);
-            formData.append('poll_question', pollQuestion);
-            formData.append('poll_options', JSON.stringify(pollOptions));
 
             // Envoi des données via fetch (AJAX)
             fetch('../common/php/add_post.php', {

@@ -1,0 +1,14 @@
+a{
+    text-decoration: none;
+    color: #000000;
+}
+
+.hashtag{
+    color: #ff3366; /* Bleu comme les liens */
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+    :hover{
+        text-decoration: underline;
+    }
+}
