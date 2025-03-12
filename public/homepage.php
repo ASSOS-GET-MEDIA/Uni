@@ -47,19 +47,21 @@ if ($followedUsers) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
-        <a class="navbar-brand" href="#">MonRéseau</a>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3 align-items-center">
+        <a class="navbar-brand d-flex flex-row" href="#">Universee<p class="ms-2 text-secondary">v2</p></a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
+        <div class="collapse navbar-collapse " id="navbarNav">
+            <!--
             <form class="d-flex mx-auto">
                 <input class="form-control me-2" type="search" placeholder="Rechercher...">
                 <button class="btn btn-outline-light" type="submit">Rechercher</button>
             </form>
+            -->
 
             <!-- Bouton de profil avec menu déroulant -->
-            <div class="dropdown">
+            <div class="dropdown ms-auto">
                 <button class="btn dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                     <img src="<?= htmlspecialchars($user['pp']) ?>" alt="PP" class="rounded-circle" width="40">
                 </button>
@@ -239,4 +241,15 @@ if ($followedUsers) {
         });
     </script>
 </body>
+<footer class="bg-dark text-light py-4 mt-5">
+    <div class="container text-center">
+        <p>&copy; <?= date("Y") ?> Universee - Tous droits réservés</p>
+        <ul class="list-inline">
+            <li class="list-inline-item"><a href="cgu.php" class="text-light">Conditions Générales d'Utilisation</a></li>
+            <li class="list-inline-item"><a href="confidentialite.php" class="text-light">Politique de confidentialité</a></li>
+            <li class="list-inline-item"><a href="contact.php" class="text-light">Contact</a></li>
+            <li class="list-inline-item"><a href="a_propos.php" class="text-light">À propos</a></li>
+        </ul>
+    </div>
+</footer>
 </html>

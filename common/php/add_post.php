@@ -15,8 +15,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['content'])) {
     // Exécuter la requête
     if ($stmt->execute()) {
         // Retourner la réponse JSON sans le nom d'utilisateur
-        $query = "SELECT pp FROM users WHERE id = $user_id";
-        $user = $conn->query($query);
 
         echo json_encode([
             'status' => 'success'

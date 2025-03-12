@@ -47,7 +47,10 @@ if ($result) {
                         </button>
                     <?php endif; ?>
                 </h5>
-                <p class="card-text"><?= nl2br(htmlspecialchars($post['content'])) ?></p>
+                <p class="card-text"><?= nl2br(htmlspecialchars_decode($post['content'])) ?></p>
+                <?php if (!empty($post['gif'])): ?>
+                    <img src="<?= htmlspecialchars($post['gif']) ?>" alt="GIF du post" class="img-fluid">
+                <?php endif; ?>
                 
                 <!-- Formulaire pour le Like -->
                 <button class="btn btn-outline-secondary btn-sm like-btn" data-post-id="<?= $post['id'] ?>">
