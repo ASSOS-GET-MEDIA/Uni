@@ -47,6 +47,14 @@ if ($followedUsers) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../common/css/post.css">
     <link rel="stylesheet" href="../common/css/base.css">
+    <style>
+        .profile-pic-big {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3 align-items-center">
@@ -133,249 +141,55 @@ if ($followedUsers) {
 
             <aside class="col-md-3 d-none d-md-block">
                 <div class="card">
-                <div class="card-header">Personnes que vous suivez</div>
-                    <ul class="list-group list-group-flush">
-                        <?php if (count($followedUserList) > 0): ?>
-                            <?php foreach ($followedUserList as $followedUser): ?>
-                                <li class="list-group-item d-flex align-items-center">
-                                    <img src="<?= htmlspecialchars($followedUser['pp']) ?>" alt="PP" class="profile-pic">
-                                    <div class="d-flex flex-column ms-2">
-                                        <h4><?= htmlspecialchars($followedUser['username']) ?></h4>
-                                    </div>
-                                </li>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <li class="list-group-item">Vous ne suivez personne pour le moment.</li>
-                        <?php endif; ?>
-                    </ul>
+                    <div class="card-body text-center">
+                        <?php
+                            // Requête pour récupérer les utilisateurs suivis par l'utilisateur connecté
+                            $query = $conn->prepare("SELECT * FROM users WHERE id = ?");
+                            $query->bind_param("i", $_SESSION['user_id']);
+                            $query->execute();
+                            $result = $query->get_result();
+                            $user_data = $result->fetch_assoc();
+                        ?>
+                        <img src="<?= htmlspecialchars($user_data['pp']) ?>" alt="Photo de profil" class="profile-pic-big mb-3">
+                        <h3><?= htmlspecialchars($user_data['username']) ?></h3>
+                        <p>@<?= htmlspecialchars($user_data['at']) ?></p>
+                        <p><strong><?= htmlspecialchars($user_data['nb_follows']) ?> followers</strong></p>
+                        <a href="edit_profile.php" class="btn btn-outline-primary btn-sm" 
+                            <?php if ($_SESSION['user_id'] != $user_data['id']) echo 'style="display:none;"'; ?>>
+                            Modifier le profil
+                        </a>
+                    </div>
+                    <div class="card-header">Personnes que vous suivez</div>
+                        <ul class="list-group list-group-flush">
+                            <?php if (count($followedUserList) > 0): ?>
+                                <?php foreach ($followedUserList as $followedUser): ?>
+                                    <li class="list-group-item d-flex align-items-center">
+                                        <img src="<?= htmlspecialchars($followedUser['pp']) ?>" alt="PP" class="profile-pic">
+                                        <div class="d-flex flex-column ms-2">
+                                            <h4><?= htmlspecialchars($followedUser['username']) ?></h4>
+                                        </div>
+                                    </li>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <li class="list-group-item">Vous ne suivez personne pour le moment.</li>
+                            <?php endif; ?>
+                        </ul>
+                    </div>
                 </div>
             </aside>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="../common/js/vote.js"></script>
+    <script src="../common/js/post.js"></script>
+    <script src="../common/js/trending_hashtags.js"></script>
+    <script src="../common/js/poll_progress.js"></script>
+    <script src="../common/js/poll.js"></script>
+    <script src="../common/js/like.js"></script>
+    <script src="../common/js/follow.js"></script>
 
-    <script>
-        function toggleCommentBox(postId) {
-            let commentBox = document.getElementById("comment-box-" + postId);
-            if (commentBox.style.display === "none" || commentBox.style.display === "") {
-                commentBox.style.display = "block";
-            } else {
-                commentBox.style.display = "none";
-            }
-        }
-    </script>
-
-    <script>
-        $(document).ready(function() {
-            $(".vote-btn").each(function() {
-                var button = $(this);
-                var progressBar = button.find(".progress-bar");
-                var textElement = button.find("span");
-
-                var progressWidth = progressBar.width();
-                var buttonWidth = button.width();
-
-                // Vérifie si la barre de progression a atteint ou dépasse le texte
-                if (progressWidth >= buttonWidth) {
-                    button.addClass("text-white"); // Applique la classe pour changer la couleur du texte en blanc
-                } else {
-                    button.removeClass("text-white"); // Retire la classe si ce n'est pas le cas
-                }
-            });
-        });
-    </script>
-
-    <script>
-        // Afficher/masquer la section du sondage
-        document.getElementById('poll-toggle-btn').addEventListener('click', function() {
-            var pollSection = document.getElementById('poll-section');
-            pollSection.style.display = (pollSection.style.display === 'none') ? 'block' : 'none';
-        });
-
-        // Ajouter un champ de réponse supplémentaire (jusqu'à 5)
-        document.getElementById('add-option-btn').addEventListener('click', function() {
-            var pollOptions = document.getElementById('poll-options');
-            var existingOptions = pollOptions.getElementsByTagName('input').length;
-
-            // Ajouter une nouvelle option si il y en a moins de 5
-            if (existingOptions < 4) {  // 10 champ maximum (2 initialement + 8 ajoutés)
-                var newOption = document.createElement('div');
-                newOption.classList.add('input-group', 'mb-2');
-                newOption.innerHTML = `
-                    <input type="text" class="form-control" name="poll_options[]" placeholder="Option ${existingOptions + 1}">
-                    <button type="button" class="btn btn-outline-danger" onclick="removeOption(this)">❌</button>
-                `;
-                pollOptions.appendChild(newOption);
-            } else {
-                alert("Vous ne pouvez ajouter que 5 réponses.");
-            }
-        });
-
-        // Supprimer une option, mais garder au moins deux champs
-        function removeOption(button) {
-            var pollOptions = document.getElementById('poll-options');
-            var optionsCount = pollOptions.getElementsByTagName('input').length;
-
-            // S'assurer qu'il reste au moins deux options
-            if (optionsCount > 2) {
-                var inputGroup = button.parentNode;
-                inputGroup.remove();
-            } else {
-                alert("Vous devez garder au moins deux réponses.");
-            }
-        }
-    </script>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            fetch('../common/php/fetch_trending_hashtags.php')
-                .then(response => response.json())
-                .then(data => {
-                    let hashtagList = document.getElementById('trending-hashtags');
-                    hashtagList.innerHTML = ''; // Vide la liste avant d'ajouter les hashtags
-
-                    if (data.length > 0) {
-                        data.forEach(hashtag => {
-                            let listItem = document.createElement('li');
-                            listItem.className = 'list-group-item';
-                            listItem.innerHTML = `<a href="search.php?tag=${encodeURIComponent(hashtag.hashtag)}"><p class='hashtag'>#${hashtag.hashtags} (${hashtag.count})</p></a>`;
-                            hashtagList.appendChild(listItem);
-                        });
-                    } else {
-                        hashtagList.innerHTML = '<li class="list-group-item">Aucune tendance pour l\'instant</li>';
-                    }
-                })
-                .catch(error => console.error('Erreur de chargement des hashtags:', error));
-        });
-    </script>
-
-    <script>
-        document.getElementById('post-form').addEventListener('submit', function(e) {
-            e.preventDefault(); // Empêche le rechargement de la page
-            
-            const content = document.getElementById('content').value;
-            const pollQuestion = document.getElementById('poll-question') ? document.getElementById('poll-question').value : '';
-            const pollOptions = [];
-            if (document.getElementById('poll-options')) {
-                const optionInputs = document.querySelectorAll('#poll-options input');
-                optionInputs.forEach(input => {
-                    pollOptions.push(input.value);
-                });
-            }
-
-            if (!content.trim()) {
-                alert('Le contenu ne peut pas être vide.');
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('content', content);
-            formData.append('poll_question', pollQuestion);
-            formData.append('poll_options', JSON.stringify(pollOptions));
-
-            // Envoi des données via fetch (AJAX)
-            fetch('../common/php/add_post.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json()) // On s'attend à une réponse JSON
-            .then(data => {
-                if (data.status === 'success') {
-                    // Créer un nouvel élément post dynamique sans recharger la page
-                    const newPost = document.createElement('div');
-                    newPost.innerHTML = `
-                        <div class="alert alert-success" role="alert">
-                            Posté avec succès !
-                        </div>
-                    `;
-                    document.getElementById('posts-list').prepend(newPost);
-                    document.getElementById('content').value = ''; // Réinitialiser le champ du texte
-                } else {
-                    alert('Une erreur est survenue. Veuillez réessayer.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Une erreur est survenue.');
-            });
-        });
-    </script>
-
-    <script>
-        // Gestionnaire d'événement pour le bouton "Like"
-        document.addEventListener('DOMContentLoaded', function() {
-            const likeButtons = document.querySelectorAll('.like-btn');
-
-            likeButtons.forEach(button => {
-                button.addEventListener('click', function(e) {
-                    const postId = e.target.getAttribute('data-post-id'); // Récupérer l'id du post
-                    const likeCountElement = e.target.querySelector('.like-count');
-
-                    // Envoi de la requête AJAX pour liker le post
-                    fetch('../common/php/like_post.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        body: `post_id=${postId}` // Paramètre post_id
-                    })
-                    .then(response => response.json()) // On s'attend à une réponse JSON
-                    .then(data => {
-                        if (data.status === 'success') {
-                            // Mise à jour du nombre de likes
-                            likeCountElement.textContent = data.new_like_count;
-                        } else {
-                            alert('Une erreur est survenue lors du like.');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Erreur:', error);
-                        console.log(JSON.stringify(response));
-                        alert('Une erreur est survenue.');
-                    });
-                });
-            });
-        });
-    </script>
-
-    <script>
-        // Gérer le clic sur le bouton Follow/Unfollow
-        document.querySelectorAll('.follow-btn').forEach(function(button) {
-            button.addEventListener('click', function() {
-                const authorId = this.getAttribute('data-author-id');
-                const userId = this.getAttribute('data-user-id');
-                const isFollowing = this.getAttribute('data-following') === 'true';
-
-                // Créer une nouvelle instance de FormData
-                const formData = new FormData();
-                formData.append('author_id', authorId);
-                formData.append('user_id', userId);
-                formData.append('action', isFollowing ? 'unfollow' : 'follow');
-
-                // Envoi des données via fetch (AJAX)
-                fetch('../common/php/follow_user.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        // Mettre à jour le bouton Follow/Unfollow
-                        button.textContent = isFollowing ? 'Follow' : 'Unfollow';
-                        button.setAttribute('data-following', isFollowing ? 'false' : 'true');
-                    } else {
-                        alert('Une erreur est survenue. Veuillez réessayer.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Erreur:', error);
-                    alert('Une erreur est survenue.');
-                });
-            });
-        });
-    </script>
 </body>
 <footer class="bg-dark text-light py-4 mt-5">
     <div class="container text-center">

@@ -62,7 +62,7 @@ function displayPost($conn, $post) {
     <div class="card mb-3">
         <div class="card-body">
             <h5 class="card-title">
-                <img src="<?= htmlspecialchars($post['pp']) ?>" alt="PP" class="rounded-circle" width="40"> 
+                <img src="<?= htmlspecialchars($post['pp']) ?>" alt="PP" class="profile-pic"> 
                 <?= htmlspecialchars($post['username']) ?>
                 <?php if ($currentUserId && $currentUserId != $authorId): ?>
                     <button class="btn btn-outline-primary btn-sm follow-btn float-end" 
