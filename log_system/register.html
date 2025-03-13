@@ -32,6 +32,11 @@
 
             <!-- Champ pour le mot de passe -->
             <input type="password" id="password" class="form-control mt-2" placeholder="Mot de passe" required>
+
+            <div>
+                <input type="checkbox" id="cgu" name="cgu" value="1" required>
+                <label for="cgu">J'accepte les <a href="../public/legal/cgu.pdf">Conditions Générales d'Utilisation</a></label>
+            </div>
             
             <button type="submit" class="btn btn-primary mt-2 w-100">S'inscrire</button>
         </form>
@@ -71,7 +76,8 @@
                     username: $("#username").val(),
                     email: $("#email").val(),
                     at: $("#at").val(),
-                    password: $("#password").val()
+                    password: $("#password").val(),
+                    cgu: $("#cgu").val()
                 }, function(response) {
                     $("#register-msg").removeClass("d-none alert-danger alert-success")
                                       .addClass(response.status === "success" ? "alert-success" : "alert-danger")

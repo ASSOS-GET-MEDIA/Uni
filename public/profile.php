@@ -43,8 +43,9 @@ function highlightHashtags($content) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profil de <?= htmlspecialchars($user['username']) ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../common/css/base.css">
     <style>
-        .profile-pic {
+        .profile-pic-big {
             width: 150px;
             height: 150px;
             object-fit: cover;
@@ -65,7 +66,7 @@ function highlightHashtags($content) {
             <!-- Bouton de profil avec menu déroulant -->
             <div class="dropdown ms-auto">
                 <button class="btn dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img src="<?= htmlspecialchars($con_user['pp']) ?>" alt="PP" class="rounded-circle" width="40">
+                    <img src="<?= htmlspecialchars($con_user['pp']) ?>" alt="PP" class="profile-pic">
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                     <li><a class="dropdown-item" href="profile.php?u=<?= $_SESSION['user_id'] ?>">Profil</a></li>
@@ -82,7 +83,7 @@ function highlightHashtags($content) {
                 <!-- Sidebar avec photo de profil -->
                 <div class="card profile-card">
                     <div class="card-body text-center">
-                        <img src="<?= htmlspecialchars($user['pp']) ?>" alt="Photo de profil" class="profile-pic mb-3">
+                        <img src="<?= htmlspecialchars($user['pp']) ?>" alt="Photo de profil" class="profile-pic-big mb-3">
                         <h3><?= htmlspecialchars($user['username']) ?></h3>
                         <p>@<?= htmlspecialchars($user['at']) ?></p>
                         <p><strong><?= htmlspecialchars($user['nb_follows']) ?> followers</strong></p>
@@ -132,7 +133,7 @@ function highlightHashtags($content) {
                         <div class="card mb-3">
                             <div class="card-body">
                                 <h5 class="card-title">
-                                    <img src="<?= htmlspecialchars($user['pp']) ?>" alt="PP" class="rounded-circle" width="40"> 
+                                    <img src="<?= htmlspecialchars($user['pp']) ?>" alt="PP" class="profile-pic"> 
                                     <?= htmlspecialchars($user['username']) ?>
                                     <!-- Bouton Follow/Unfollow -->
                                     <?php if ($currentUserId != $authorId): // Empêcher de se suivre soi-même ?>
@@ -195,4 +196,14 @@ function highlightHashtags($content) {
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+<footer class="bg-dark text-light py-4 mt-5">
+    <div class="container text-center">
+        <p>&copy; <?= date("Y") ?> Universee - Tous droits réservés</p>
+        <ul class="list-inline">
+            <li class="list-inline-item"><a href="legal/cgu.pdf" class="text-light">Conditions Générales d'Utilisation</a></li>
+            <li class="list-inline-item"><a href="confidentialite.php" class="text-light">Politique de confidentialité</a></li>
+            <li class="list-inline-item"><a href="contact.php" class="text-light">Contact</a></li>
+        </ul>
+    </div>
+</footer>
 </html>

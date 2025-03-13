@@ -47,7 +47,7 @@ if ($result) {
             <div class="card-body">
             <h5 class="card-title">
                 <a href="profile.php?u=<?= htmlspecialchars($post['user_id']) ?>" class="text-decoration-none">
-                    <img src="<?= htmlspecialchars($post['pp']) ?>" alt="PP" class="rounded-circle" width="40">
+                    <img src="<?= htmlspecialchars($post['pp']) ?>" alt="PP" class="profile-pic">
                     <?= htmlspecialchars($post['username']) ?>
                 </a>
                 <!-- Bouton Follow/Unfollow -->
@@ -82,7 +82,9 @@ if ($result) {
                 <p class="card-text"><?= nl2br($formattedContent) ?></p>
                 
                 <!-- Affichage du sondage -->
-                <?php if (!empty($post['poll_question']) && !empty($post['poll_options'])): ?>
+                <?php 
+                // Affichage du sondage
+                if (!empty($post['poll_question']) && !empty($post['poll_options'])): ?>
                     <div class="poll-section mt-3">
                         <h6><strong><?= htmlspecialchars($post['poll_question']) ?></strong></h6>
                         <?php
@@ -99,8 +101,10 @@ if ($result) {
                                     $isDisabled = $userVoted ? 'disabled' : '';
 
                                     echo '<div class="d-flex align-items-center mb-2">
-                                            <button class="btn btn-outline-primary btn-sm vote-btn me-2 w-100" data-post-id="' . $postId . '" data-option="' . htmlspecialchars($option) . '" ' . $isDisabled . '>
-                                                ' . htmlspecialchars($option) . ' <span class="float-end text-muted">' . $votesForOption . ' votes (' . $votePercentage . '%)</span>
+                                            <button class="btn btn-outline-primary btn-sm vote-btn me-2 w-100 ' . $isDisabled . '" data-post-id="' . $postId . '" data-option="' . htmlspecialchars($option) . '">
+                                                ' . htmlspecialchars($option) . '
+                                                <span class="float-end text-muted">' . $votesForOption . ' votes (' . $votePercentage . '%)</span>
+                                                <div class="progress-bar" style="width: ' . $votePercentage . '%;"></div>
                                             </button>
                                         </div>';
                                 }
@@ -118,17 +122,9 @@ if ($result) {
                 </button>
                 
                 <!-- Bouton pour afficher/masquer la boîte de commentaires -->
-                <button class="disabled btn btn-outline-secondary btn-sm" onclick="toggleCommentBox(<?= htmlspecialchars($post['id']) ?>)">
+                <button class="disabled btn btn-outline-secondary btn-sm" data-bs-toggle="collapse" data-bs-target="#comment-box-<?= htmlspecialchars($post['id']) ?>">
                     💬 <?= $post['nb_coms'] ?>
                 </button>
-
-                <div id="comment-box-<?= htmlspecialchars($post['id']) ?>" style="display:none; margin-top:10px;">
-                    <form action="add_comment.php" method="POST">
-                        <input type="hidden" name="post_id" value="<?= htmlspecialchars($post['id']) ?>">
-                        <textarea class="form-control" name="content" rows="2" placeholder="Votre commentaire..."></textarea>
-                        <button class="btn btn-primary mt-2 btn-sm" type="submit">Commenter</button>
-                    </form>
-                </div>
             </div>
         </div>
 <?php 

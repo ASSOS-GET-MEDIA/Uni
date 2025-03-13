@@ -39,17 +39,18 @@ if ($followedUsers) {
 ?>
 
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-bs-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Réseau Social</title>
+    <title>Universee</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../common/css/post.css">
+    <link rel="stylesheet" href="../common/css/base.css">
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3 align-items-center">
-        <a class="navbar-brand d-flex flex-row" href="homepage.php">Universee<p class="ms-2 text-secondary">v2</p></a>
+        <a class="navbar-brand d-flex flex-row" href="homepage.php"><h4>Universee</h4><p class="ms-2 text-secondary">v2</p></a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -64,7 +65,7 @@ if ($followedUsers) {
             <!-- Bouton de profil avec menu déroulant -->
             <div class="dropdown ms-auto">
                 <button class="btn dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img src="<?= htmlspecialchars($user['pp']) ?>" alt="PP" class="rounded-circle" width="40">
+                    <img src="<?= htmlspecialchars($user['pp']) ?>" alt="PP" class="profile-pic">
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                     <li><a class="dropdown-item" href="profile.php?u=<?= $currentUserId ?>">Profil</a></li>
@@ -95,17 +96,17 @@ if ($followedUsers) {
                             <!-- Section du sondage cachée au départ -->
                             <div id="poll-section" class="mt-2" style="display: none;">
                                 <label for="poll-question">Question du sondage</label>
-                                <input type="text" class="form-control" id="poll-question" name="poll_question" placeholder="Entrez votre question de sondage" required>
+                                <input type="text" class="form-control" id="poll-question" name="poll_question" placeholder="Entrez votre question de sondage">
                                 
                                 <!-- 2 champs de réponses par défaut -->
                                 <label for="poll-options">Réponses du sondage</label>
                                 <div id="poll-options">
                                     <div class="input-group mb-2">
-                                        <input type="text" class="form-control" name="poll_options[]" placeholder="Option 1" required>
+                                        <input type="text" class="form-control" name="poll_options[]" placeholder="Option 1">
                                         <button type="button" class="btn btn-outline-danger" onclick="removeOption(this)">❌</button>
                                     </div>
                                     <div class="input-group mb-2">
-                                        <input type="text" class="form-control" name="poll_options[]" placeholder="Option 2" required>
+                                        <input type="text" class="form-control" name="poll_options[]" placeholder="Option 2">
                                         <button type="button" class="btn btn-outline-danger" onclick="removeOption(this)">❌</button>
                                     </div>
                                 </div>
@@ -137,7 +138,7 @@ if ($followedUsers) {
                         <?php if (count($followedUserList) > 0): ?>
                             <?php foreach ($followedUserList as $followedUser): ?>
                                 <li class="list-group-item d-flex align-items-center">
-                                    <img src="<?= htmlspecialchars($followedUser['pp']) ?>" alt="PP" class="rounded-circle" width="40">
+                                    <img src="<?= htmlspecialchars($followedUser['pp']) ?>" alt="PP" class="profile-pic">
                                     <div class="d-flex flex-column ms-2">
                                         <h4><?= htmlspecialchars($followedUser['username']) ?></h4>
                                     </div>
@@ -154,6 +155,37 @@ if ($followedUsers) {
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../common/js/vote.js"></script>
+
+    <script>
+        function toggleCommentBox(postId) {
+            let commentBox = document.getElementById("comment-box-" + postId);
+            if (commentBox.style.display === "none" || commentBox.style.display === "") {
+                commentBox.style.display = "block";
+            } else {
+                commentBox.style.display = "none";
+            }
+        }
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $(".vote-btn").each(function() {
+                var button = $(this);
+                var progressBar = button.find(".progress-bar");
+                var textElement = button.find("span");
+
+                var progressWidth = progressBar.width();
+                var buttonWidth = button.width();
+
+                // Vérifie si la barre de progression a atteint ou dépasse le texte
+                if (progressWidth >= buttonWidth) {
+                    button.addClass("text-white"); // Applique la classe pour changer la couleur du texte en blanc
+                } else {
+                    button.removeClass("text-white"); // Retire la classe si ce n'est pas le cas
+                }
+            });
+        });
+    </script>
 
     <script>
         // Afficher/masquer la section du sondage
@@ -349,10 +381,9 @@ if ($followedUsers) {
     <div class="container text-center">
         <p>&copy; <?= date("Y") ?> Universee - Tous droits réservés</p>
         <ul class="list-inline">
-            <li class="list-inline-item"><a href="cgu.php" class="text-light">Conditions Générales d'Utilisation</a></li>
+            <li class="list-inline-item"><a href="legal/cgu.pdf" class="text-light">Conditions Générales d'Utilisation</a></li>
             <li class="list-inline-item"><a href="confidentialite.php" class="text-light">Politique de confidentialité</a></li>
             <li class="list-inline-item"><a href="contact.php" class="text-light">Contact</a></li>
-            <li class="list-inline-item"><a href="a_propos.php" class="text-light">À propos</a></li>
         </ul>
     </div>
 </footer>
