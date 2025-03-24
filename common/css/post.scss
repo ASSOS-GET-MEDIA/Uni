@@ -1,0 +1,61 @@
+.poll-section{
+    h6{
+        color: white;
+    }
+    p{
+        color: white !important;
+    }
+}
+
+.votes{
+    color: white !important;
+}
+
+.vote-btn {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    padding: 10px;
+    text-align: left;
+    overflow: hidden;
+    color: white;
+        
+    .progress-bar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        background-color: #ff3366; /* Change la couleur de la barre */
+        z-index: -1; /* Met la barre en arrière-plan */
+        transition: width 0.5s ease-out;
+    }
+
+    span {
+        position: relative;
+        z-index: 1; /* Assure que le texte reste au-dessus de la barre de progression */
+        transition: color 0.3s ease; /* Ajout d'une transition pour la couleur */
+        color: white;
+    }
+
+    /* Classe qui applique la couleur blanche au texte */
+    &.text-white {
+        span {
+            color: white !important; /* Change le texte en blanc quand la classe est appliquée */
+        }
+    }
+}
+
+a{
+    text-decoration: none;
+    color: #ffffff !important;
+}
+
+.hashtag{
+    color: #ff3366 !important; /* Bleu comme les liens */
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+    :hover{
+        text-decoration: underline;
+    }
+}

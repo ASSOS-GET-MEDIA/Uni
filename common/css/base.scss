@@ -1,0 +1,108 @@
+// Personnalisation de la couleur primaire
+$primary: #ff3366;
+$info : #20A4F3;
+$success : #2DC4B6;
+
+// Importation du fichier SCSS de Bootstrap après avoir défini les variables
+@import "../../node_modules/bootstrap/scss/bootstrap";
+
+body {
+    background-color: #011627;  /* Couleur de fond de la page */
+    overflow: auto;  /* Permet le défilement */
+    position: relative;
+    height: 100vh;  /* Définit la hauteur de la page */
+    margin: 0;  /* Enlève les marges par défaut */
+}
+
+.pixel {
+    position: absolute;
+    width: 20px;   /* Taille du carré */
+    height: 20px;
+    background-color: #f2cce2;  /* Couleur des carrés */
+    opacity: 0;  /* Initialement transparent */
+    animation: fadeInOut 4s ease-in-out infinite;  /* Animation pour faire apparaître et disparaître les carrés en fondu */
+    z-index: -1;  /* Placer les pixels sous le contenu */
+}
+
+@keyframes fadeInOut {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1; /* Pixel visible */
+    }
+    100% {
+        opacity: 0;  /* Pixel disparaît */
+    }
+}
+
+nav{
+    h4{
+        color: white;
+    }
+}
+
+.card {
+    background: rgba(255, 255, 255, 0.17); /* Fond semi-transparent */
+    backdrop-filter: blur(10px); /* Flou derrière l'élément */
+    -webkit-backdrop-filter: blur(10px); /* Compatibilité Safari */
+    border-radius: 12px; /* Coins arrondis */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Bordure fine et semi-transparente */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ombre légère */
+    padding: 15px;
+    transition: all 0.3s ease-in-out; /* Animation fluide */
+    color: white;
+    .list-group {
+        --bs-list-group-bg: rgba(255, 255, 255, 0);
+    }
+}
+
+a{
+    text-decoration: none;
+}
+
+/* Titre de la carte */
+.card-title {
+    font-weight: bold;
+    color: white;
+}
+
+/* Texte de la carte */
+.card-text {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* Ajout d'un effet neon aux hashtags */
+.hashtag{
+    color: #f2cce2;
+    font-weight: bold;
+    text-decoration: none;
+    :hover {
+        text-shadow: 0 0 5px #f2cce2;
+    }
+}
+
+/* Boutons primaires avec texte en blanc */
+.btn-primary {
+    background-color: $primary;
+    border-color: $primary;
+    color: white;
+
+    &:hover,
+    &:focus {
+        background-color: darken($primary, 10%);
+        border-color: darken($primary, 10%);
+        color: white;
+    }
+}
+
+.profile-pic {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.textarea {
+    background-color: transparent;
+}

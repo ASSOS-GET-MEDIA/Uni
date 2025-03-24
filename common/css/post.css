@@ -1,0 +1,55 @@
+@charset "UTF-8";
+.poll-section h6 {
+  color: white;
+}
+.poll-section p {
+  color: white !important;
+}
+
+.votes {
+  color: white !important;
+}
+
+.vote-btn {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  padding: 10px;
+  text-align: left;
+  overflow: hidden;
+  color: white;
+  /* Classe qui applique la couleur blanche au texte */
+}
+.vote-btn .progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: #ff3366; /* Change la couleur de la barre */
+  z-index: -1; /* Met la barre en arrière-plan */
+  transition: width 0.5s ease-out;
+}
+.vote-btn span {
+  position: relative;
+  z-index: 1; /* Assure que le texte reste au-dessus de la barre de progression */
+  transition: color 0.3s ease; /* Ajout d'une transition pour la couleur */
+  color: white;
+}
+.vote-btn.text-white span {
+  color: white !important; /* Change le texte en blanc quand la classe est appliquée */
+}
+
+a {
+  text-decoration: none;
+  color: #ffffff !important;
+}
+
+.hashtag {
+  color: #ff3366 !important; /* Bleu comme les liens */
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+}
+.hashtag :hover {
+  text-decoration: underline;
+}/*# sourceMappingURL=post.css.map */
